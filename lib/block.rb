@@ -140,20 +140,29 @@ class Block
   # Return the result of subtracting the other Block (or Blocks) from self.
 
   def subtract(other)  
-    return [] if self == other
-    if surrounds?(other)
-      split(other)
-    elsif covers?(other) 
-      if intersects_top?(other)
-        [trim_to(other.start)]
-      elsif intersects_bottom?(other)  
-        [trim_from(other.end)]
+    if other.class == Array
+      new_params = []
+      other.each do |block|
+        new_params << block.start if self.include?(block.start) 
+        new_params << block.end  if self.include?(block.end)
       end
-    elsif overlaps?(other) && other.bottom == top
-      [self]
-    else
-      []
-    end
+      [Block.new(new_params[0], new_params[1]), Block.new(new_params[2], new_params[3])]
+    else  
+      return [] if self == other
+      if surrounds?(other)
+        split(other)
+      elsif covers?(other) 
+        if intersects_top?(other)
+          [trim_to(other.start)]
+        elsif intersects_bottom?(other)  
+          [trim_from(other.end)]
+        end
+      elsif overlaps?(other) && other.bottom == top
+        [self]
+      else
+        []
+      end
+    end 
   end
 
   alias :- :subtract
