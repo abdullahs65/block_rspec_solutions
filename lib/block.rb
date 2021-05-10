@@ -182,6 +182,30 @@ class Block
   end
 
   def merge(others)
-     # Implement 
+    blocks = []
+    i = 0
+    issolated_count = 0
+    others.each do |block|
+      if i == 0
+        current_block = self
+        comp_block = block
+      elsif i == (others.count - 1)
+        current_block = block
+        comp_block = others[i - 1]
+      else
+        current_block = block
+        comp_block = others[i + 1]
+      end 
+      if current_block.overlaps?(comp_block)
+        blocks << Block.new(current_block.start, comp_block.end)
+      else
+        issolated_count +=1
+      end
+      if issolated_count == 2
+        blocks << Block.new(block.start, block.end)
+      end  
+      i += 1
+    end
+    blocks
   end
 end
